@@ -1,4 +1,4 @@
-package com.example.fakelotto
+package com.panicdev.fakelotto
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

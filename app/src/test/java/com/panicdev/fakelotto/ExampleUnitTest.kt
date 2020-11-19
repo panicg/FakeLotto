@@ -1,4 +1,4 @@
-package com.example.fakelotto
+package com.panicdev.fakelotto
 
 import org.junit.Test
 
