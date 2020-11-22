@@ -1,13 +1,19 @@
 package com.panicdev.fakelotto.main.view.activity
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Handler
+import android.view.MotionEvent
+import android.view.View
+import android.widget.Toast
 import com.panicdev.fakelotto.R
 import com.google.zxing.ResultPoint
 import com.journeyapps.barcodescanner.*
 import com.panicdev.fakelotto.databinding.ActivityScanBinding
 import com.panicdev.fakelotto.main.viewmodel.ScanViewModel
 import com.panicdev.panic.base.BaseActivity
+import com.panicdev.panic.common.AndroidUtilities
+import com.panicdev.panic.common.L
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.lang.reflect.Field
 
@@ -18,6 +24,8 @@ class ScanActivity : BaseActivity<ActivityScanBinding, ScanViewModel>(), Barcode
     override val layoutResourceId: Int = R.layout.activity_scan
     override val baseViewModel: ScanViewModel by viewModel()
     var capture: CaptureManagerEx? = null
+
+    var isTouching = false
 
 
     override fun initStartView() {
@@ -40,6 +48,24 @@ class ScanActivity : BaseActivity<ActivityScanBinding, ScanViewModel>(), Barcode
         }
     }
 
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        when (event?.action) {
+            MotionEvent.ACTION_DOWN -> {
+                isTouching = true
+                return true
+            }
+            MotionEvent.ACTION_MOVE -> {
+                return true
+            }
+            MotionEvent.ACTION_UP -> {
+                isTouching = false
+                return false
+            }
+        }
+        return false
+    }
+
+
     override fun initAfterBinding() {
         baseViewModel.run {
 
@@ -49,7 +75,19 @@ class ScanActivity : BaseActivity<ActivityScanBinding, ScanViewModel>(), Barcode
     override fun barcodeResult(result: BarcodeResult?) {
         result?.let {
             val code = it.text
-//            mPresenter.decode(result)
+            Toast.makeText(this@ScanActivity, code.toString(), Toast.LENGTH_SHORT).show()
+            L.d( "panicDev4", code.toString())
+
+            if (isTouching) {
+                //터치중
+                val intent = Intent(this, FakeActivity::class.java)
+                startActivity(intent)
+            } else {
+                //터치 안함
+                val intent = Intent(this, RealActivity::class.java)
+                intent.putExtra("url", result.toString())
+                startActivity(intent)
+            }
         }
     }
 
@@ -69,6 +107,13 @@ class ScanActivity : BaseActivity<ActivityScanBinding, ScanViewModel>(), Barcode
         } catch (e: IllegalAccessException) {
             e.printStackTrace()
         }
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        isTouching = false
+        capture?.decode(this@ScanActivity)
+        capture?.onResume()
     }
 
     override fun onResume() {

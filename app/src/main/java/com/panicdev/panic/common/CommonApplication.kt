@@ -5,6 +5,9 @@ import android.content.ComponentCallbacks
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Handler
+import com.panicdev.panic.base.trModules
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
 open class CommonApplication : Application() {
 
@@ -13,6 +16,11 @@ open class CommonApplication : Application() {
 
         appContext = this.applicationContext
         applicationHandler = Handler(this.mainLooper)
+
+        startKoin {
+            androidContext(this@CommonApplication)
+            modules(trModules)
+        }
 
     }
 
