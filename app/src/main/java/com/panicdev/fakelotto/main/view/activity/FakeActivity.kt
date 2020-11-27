@@ -12,6 +12,7 @@ class FakeActivity : BaseActivity<ActivityFakeBinding, FakeViewModel>() {
 
     override fun initStartView() {
         viewDataBinding.run {
+            vm = baseViewModel
 
 
         }
