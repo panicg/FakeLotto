@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "140518131975",
+    "firebase_url": "https://fakelotto-2b168.firebaseio.com",
+    "project_id": "fakelotto-2b168",
+    "storage_bucket": "fakelotto-2b168.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:140518131975:android:02fbcdd589c2ce9a715da2",
+        "android_client_info": {
+          "package_name": "com.panicdev.fakelotto"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "140518131975-91q39k86u1dqiud0r6a2cneqb3oa372i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxDmhLZEK3cOpIgR3qUC7_OuMPq-_li04"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "140518131975-91q39k86u1dqiud0r6a2cneqb3oa372i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

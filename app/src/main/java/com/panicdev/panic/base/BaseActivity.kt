@@ -55,10 +55,10 @@ abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCompatA
 
             when (flag) {
                 1 -> {
-                    showProgress(Color.WHITE)
+                    showProgress(false)
                 }
                 2 -> {
-                    showProgress(Color.TRANSPARENT)
+                    showProgress(true)
                 }
                 3 -> {
                     hideProgress()
@@ -71,8 +71,8 @@ abstract class BaseActivity<T : ViewDataBinding, R : BaseViewModel> : AppCompatA
 
 
 
-    private fun showProgress(backgroundColor: Int) {
-        progressView.show(0f, viewDataBinding.root as ViewGroup)
+    private fun showProgress(isTransparent : Boolean) {
+        progressView.show(if (isTransparent) 0f else 1f, viewDataBinding.root as ViewGroup)
     }
 
     private fun hideProgress() {

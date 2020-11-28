@@ -14,6 +14,11 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
 
+        <meta-data
+
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/app_id"/>
+
         <activity android:name=".main.view.activity.ScanActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,10 +26,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".main.view.activity.FakeActivity">
+        <activity android:name=".main.view.activity.ResultActivity">
 
         </activity>
-        <activity android:name=".main.view.activity.RealActivity"/>
     </application>
 
 </manifest>

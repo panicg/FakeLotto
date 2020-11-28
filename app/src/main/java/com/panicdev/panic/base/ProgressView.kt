@@ -1,5 +1,7 @@
 package com.panicdev.panic.base
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -31,12 +33,35 @@ class ProgressView : FrameLayout {
         this.parentView = parentView
         parentView.addView(this, params)
         this.bringToFront()
-        mBinding.progressBar.visibility = View.VISIBLE
+        mBinding.bg.alpha = backgroundAlpha
+//        mBinding.progressBar.visibility = View.VISIBLE
     }
     fun hide(){
         parentView?.let {
             it.removeView(this)
-            mBinding.progressBar.visibility = View.INVISIBLE
+
+            mBinding.root.animate().apply {
+                alpha(0F)
+                duration = 300
+                this.setListener(object : Animator.AnimatorListener {
+                    override fun onAnimationRepeat(animation: Animator?) {
+                    }
+
+                    override fun onAnimationEnd(animation: Animator?) {
+                        parentView?.let {
+                            it.removeView(this@ProgressView)
+                        }
+                    }
+
+                    override fun onAnimationCancel(animation: Animator?) {
+                    }
+
+                    override fun onAnimationStart(animation: Animator?) {
+                    }
+
+                })
+            }
+//            mBinding.progressBar.visibility = View.INVISIBLE
         }
     }
 

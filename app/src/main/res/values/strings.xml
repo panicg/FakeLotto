@@ -1,6 +1,12 @@
 <resources>
-    <string name="app_name">fakelotto</string>
+    <string name="app_name">로또확인</string>
     <string name="fake">
-        
+
+
     </string>
+
+    <string name="app_id">ca-app-pub-5730087376539173~1712627646</string>
+    <string name="ad_scan">ca-app-pub-5730087376539173/4714179599</string>
+    <string name="ad_result">ca-app-pub-5730087376539173/3328961641</string>
+    <string name="ad_id_test">ca-app-pub-3940256099942544/6300978111</string>
 </resources>

@@ -4,22 +4,19 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Handler
 import android.view.MotionEvent
-import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
+import com.google.android.gms.ads.AdRequest
+import com.google.zxing.BarcodeFormat
 import com.panicdev.fakelotto.R
 import com.google.zxing.ResultPoint
 import com.journeyapps.barcodescanner.*
 import com.panicdev.fakelotto.databinding.ActivityScanBinding
 import com.panicdev.fakelotto.main.viewmodel.ScanViewModel
 import com.panicdev.panic.base.BaseActivity
-import com.panicdev.panic.common.AndroidUtilities
 import com.panicdev.panic.common.L
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.lang.reflect.Field
-
-/**
- * 카드 현금 QR 환급 영수증조회 스캐너
- */
 class ScanActivity : BaseActivity<ActivityScanBinding, ScanViewModel>(), BarcodeCallback {
     override val layoutResourceId: Int = R.layout.activity_scan
     override val baseViewModel: ScanViewModel by viewModel()
@@ -45,6 +42,13 @@ class ScanActivity : BaseActivity<ActivityScanBinding, ScanViewModel>(), Barcode
                 capture?.onResume()
                 disableLaser()
             }
+
+            btnGuide.setOnClickListener {
+                GuideView(this@ScanActivity).show(parentView = viewDataBinding.root as ViewGroup)
+            }
+
+            val adRequest = AdRequest.Builder().build()
+            adView.loadAd(adRequest)
         }
     }
 
@@ -74,19 +78,20 @@ class ScanActivity : BaseActivity<ActivityScanBinding, ScanViewModel>(), Barcode
 
     override fun barcodeResult(result: BarcodeResult?) {
         result?.let {
-            val code = it.text
-            Toast.makeText(this@ScanActivity, code.toString(), Toast.LENGTH_SHORT).show()
-            L.d( "panicDev4", code.toString())
+            if (it.barcodeFormat == BarcodeFormat.QR_CODE) {
+                val code = it.text
+//                Toast.makeText(this@ScanActivity, code.toString(), Toast.LENGTH_SHORT).show()
 
-            if (isTouching) {
-                //터치중
-                val intent = Intent(this, FakeActivity::class.java)
+                //터치 안함
+                val intent = Intent(this, ResultActivity::class.java).apply {
+                    putExtra("isFake", isTouching)
+                    putExtra("url", result.toString())
+                }
                 startActivity(intent)
             } else {
-                //터치 안함
-                val intent = Intent(this, RealActivity::class.java)
-                intent.putExtra("url", result.toString())
-                startActivity(intent)
+                Toast.makeText(this, "로또종이 상단에 위치한 QR코드를 인식해주세요.", Toast.LENGTH_SHORT).show()
+                capture?.decode(this@ScanActivity)
+                capture?.onResume()
             }
         }
     }

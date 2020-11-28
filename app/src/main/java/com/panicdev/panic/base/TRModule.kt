@@ -1,5 +1,4 @@
 package com.panicdev.panic.base
-import com.panicdev.fakelotto.main.viewmodel.FakeViewModel
 import com.panicdev.fakelotto.main.viewmodel.RealViewModel
 import com.panicdev.fakelotto.main.viewmodel.ScanViewModel
 import okhttp3.OkHttpClient
@@ -22,7 +21,6 @@ var m = module {
 //    factory<HotelDataModel> { HotelDataModelImpl(get()) }
 
     viewModel { ScanViewModel() }
-    viewModel { FakeViewModel() }
     viewModel { RealViewModel() }
 
 
