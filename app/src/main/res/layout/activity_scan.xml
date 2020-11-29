@@ -56,7 +56,7 @@
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:drawableStart="@drawable/ic_action_name"
+                android:drawableStart="@drawable/ic_action_info"
                 android:padding="10dp"
                 android:text="사용법"
                 android:textColor="@android:color/white"

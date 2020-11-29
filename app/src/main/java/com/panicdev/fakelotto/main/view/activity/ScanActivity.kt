@@ -49,6 +49,7 @@ class ScanActivity : BaseActivity<ActivityScanBinding, ScanViewModel>(), Barcode
 
             val adRequest = AdRequest.Builder().build()
             adView.loadAd(adRequest)
+
         }
     }
 
@@ -82,6 +83,7 @@ class ScanActivity : BaseActivity<ActivityScanBinding, ScanViewModel>(), Barcode
                 val code = it.text
 //                Toast.makeText(this@ScanActivity, code.toString(), Toast.LENGTH_SHORT).show()
 
+//                throw RuntimeException("Test Crash") // Force a crash
                 //터치 안함
                 val intent = Intent(this, ResultActivity::class.java).apply {
                     putExtra("isFake", isTouching)
