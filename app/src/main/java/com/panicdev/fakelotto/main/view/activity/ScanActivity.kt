@@ -79,7 +79,7 @@ class ScanActivity : BaseActivity<ActivityScanBinding, ScanViewModel>(), Barcode
 
     override fun barcodeResult(result: BarcodeResult?) {
         result?.let {
-            if (it.barcodeFormat == BarcodeFormat.QR_CODE) {
+            if (it.barcodeFormat == BarcodeFormat.QR_CODE && it.toString().contains("dhlottery.co.kr")) {
                 val code = it.text
 //                Toast.makeText(this@ScanActivity, code.toString(), Toast.LENGTH_SHORT).show()
 
