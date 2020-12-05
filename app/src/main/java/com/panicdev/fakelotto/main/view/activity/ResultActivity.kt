@@ -103,6 +103,15 @@ class ResultActivity : BaseActivity<ActivityResultBinding, RealViewModel>() {
                 }
             })
 
+
+            isNotYet.observe(this@ResultActivity, Observer {
+                if (it){
+                    alert(message = "미추첨 회차입니다."){
+                        finish()
+                    }
+                }
+            })
+
             startParsing(intent.getStringExtra("url")!!, isFake)
         }
     }

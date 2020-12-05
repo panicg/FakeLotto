@@ -25,25 +25,16 @@ class RealViewModel : BaseViewModel() {
     val myLottoData: LiveData<myLottoData>
         get() = _myLottoData
 
+    private val _isNotYet = MutableLiveData<Boolean>()
+    val isNotYet: LiveData<Boolean>
+        get() = _isNotYet
+
 
     fun startParsing(url: String, isFake: Boolean) {
         showProgress(true)
-        //이건 실제로 접속하게되는 url
-        val sss =
-            "https://m.dhlottery.co.kr/qr.do?method=winQr&v=0868m041120213645m010306132438m142933354042m021823262731m1217284143441293818248"
-
-        //이건 QR코드를 읽은것
-        val ddd =
-            "http://m.dhlottery.co.kr/?v=0868m041120213645m010306132438m142933354042m021823262731m1217284143441293818248"
-
+//        val test = "http://m.dhlottery.co.kr/?v=0999q082122233242q040523253233q082530344045q030506132042q0105080929441084493665"
         val params = url.split("v=")[1]
         val realUrl = "https://m.dhlottery.co.kr/qr.do?method=winQr&v=$params"
-//        val adsada =
-//            "https://m.dhlottery.co.kr/qr.do?method=winQr&v=0896m020511144045m051225263845m041923253544m111821223640m0311242937441981797194"
-//
-//
-//        val realUrl = adsada
-
 
         var parsingWeb = Observable.fromCallable {
             Jsoup.connect(realUrl).userAgent("Android").get()
@@ -51,7 +42,15 @@ class RealViewModel : BaseViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { result ->
-//                result.select()
+
+                val resultString = result.select(".bx_notice strong").toString().removeTag()
+                if (resultString.contains("미추첨")){
+                  //미추
+                    _isNotYet.value = true
+                    return@subscribe
+                }
+
+
                 //회차
                 val roundNum = result.select(".key_clr1").first().toString().removeTag()
                 //발표일
