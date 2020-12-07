@@ -15,6 +15,7 @@ import com.panicdev.fakelotto.databinding.ActivityScanBinding
 import com.panicdev.fakelotto.main.viewmodel.ScanViewModel
 import com.panicdev.panic.base.BaseActivity
 import com.panicdev.panic.common.L
+import com.panicdev.panic.common.PreferenceController
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.lang.reflect.Field
 class ScanActivity : BaseActivity<ActivityScanBinding, ScanViewModel>(), BarcodeCallback {
@@ -24,6 +25,7 @@ class ScanActivity : BaseActivity<ActivityScanBinding, ScanViewModel>(), Barcode
 
     var isTouching = false
 
+    val preferenceController = PreferenceController.instance
 
     override fun initStartView() {
         viewDataBinding.run {
@@ -50,6 +52,11 @@ class ScanActivity : BaseActivity<ActivityScanBinding, ScanViewModel>(), Barcode
             val adRequest = AdRequest.Builder().build()
             adView.loadAd(adRequest)
 
+            val isFirst = preferenceController.getBoolean("isFirst", true)
+            if (isFirst){
+                GuideView(this@ScanActivity).show(parentView = viewDataBinding.root as ViewGroup)
+                preferenceController.putBoolean("isFirst", false)
+            }
         }
     }
 
