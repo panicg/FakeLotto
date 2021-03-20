@@ -15,6 +15,7 @@ import com.panicdev.fakelotto.databinding.ActivityScanBinding
 import com.panicdev.fakelotto.main.viewmodel.ScanViewModel
 import com.panicdev.panic.base.BaseActivity
 import com.panicdev.panic.common.L
+import com.panicdev.panic.common.LocalDataController
 import com.panicdev.panic.common.PreferenceController
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.lang.reflect.Field
@@ -96,6 +97,7 @@ class ScanActivity : BaseActivity<ActivityScanBinding, ScanViewModel>(), Barcode
                     putExtra("isFake", isTouching)
                     putExtra("url", result.toString())
                 }
+                LocalDataController.useCount++
                 startActivity(intent)
             } else {
                 Toast.makeText(this, "로또종이 상단에 위치한 QR코드를 인식해주세요.", Toast.LENGTH_SHORT).show()

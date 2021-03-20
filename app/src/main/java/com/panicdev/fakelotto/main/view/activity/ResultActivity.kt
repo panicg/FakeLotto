@@ -6,12 +6,16 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.ads.AdRequest
+import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.android.play.core.review.model.ReviewErrorCode
+import com.google.android.play.core.review.testing.FakeReviewManager
 import com.panicdev.fakelotto.databinding.HolderBoardBinding
 import com.panicdev.fakelotto.main.viewmodel.RealViewModel
 import com.panicdev.panic.base.BaseActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import com.panicdev.fakelotto.R
 import com.panicdev.fakelotto.databinding.ActivityResultBinding
+import com.panicdev.panic.common.LocalDataController
 import com.panicdev.panic.common.alert
 import kotlin.collections.ArrayList
 import kotlin.random.Random
@@ -23,10 +27,10 @@ class ResultActivity : BaseActivity<ActivityResultBinding, RealViewModel>() {
 
     var isWin = false
 
-    lateinit var scoreList : ArrayList<MutableList<Int>>
-    lateinit var statusList : List<String>
-    lateinit var boardAdapter : BoardAdapter
-    lateinit var winnerNum : List<Int>
+    lateinit var scoreList: ArrayList<MutableList<Int>>
+    lateinit var statusList: List<String>
+    lateinit var boardAdapter: BoardAdapter
+    lateinit var winnerNum: List<Int>
     var winIndex = 0
 
     var isFake = false
@@ -39,13 +43,13 @@ class ResultActivity : BaseActivity<ActivityResultBinding, RealViewModel>() {
 
             val adRequest = AdRequest.Builder().build()
             adView.loadAd(adRequest)
-       }
+        }
     }
 
     override fun initAfterBinding() {
         baseViewModel.run {
             error.observe(this@ResultActivity, Observer {
-                alert(message = it){
+                alert(message = it) {
                     finish()
                 }
             })
@@ -56,8 +60,9 @@ class ResultActivity : BaseActivity<ActivityResultBinding, RealViewModel>() {
                     tvNo.text = result.roundNum
                     tvDate.text = result.publicDate
 
-                    if (isFake){
-                        winIndex = result.roundNum.replace("제", "").replace("회", "").toInt() % result.myNum.count()
+                    if (isFake) {
+                        winIndex = result.roundNum.replace("제", "").replace("회", "")
+                            .toInt() % result.myNum.count()
                         result.winnerNum = result.myNum[winIndex]
                         result.winnerNum[6] = Random.nextInt(0, 46)
                     }
@@ -82,16 +87,17 @@ class ResultActivity : BaseActivity<ActivityResultBinding, RealViewModel>() {
                         llLose.visibility = View.VISIBLE
                     }
 
-                    val numViewList = listOf(tvWin1, tvWin2, tvWin3, tvWin4, tvWin5, tvWin6, tvWinBonus)
+                    val numViewList =
+                        listOf(tvWin1, tvWin2, tvWin3, tvWin4, tvWin5, tvWin6, tvWinBonus)
 
                     numViewList.forEachIndexed { index, textView ->
                         textView.text = "${result.winnerNum[index]}"
-                        textView.backgroundTintList = when (result.winnerNum[index]){
-                            in 1 .. 10 -> getColorStateList(R.color.clr_1)
-                            in 11 .. 20 -> getColorStateList(R.color.clr_2)
-                            in 21 .. 30 -> getColorStateList(R.color.clr_3)
-                            in 31 .. 40 -> getColorStateList(R.color.clr_4)
-                            in 41 .. 50 -> getColorStateList(R.color.clr_5)
+                        textView.backgroundTintList = when (result.winnerNum[index]) {
+                            in 1..10 -> getColorStateList(R.color.clr_1)
+                            in 11..20 -> getColorStateList(R.color.clr_2)
+                            in 21..30 -> getColorStateList(R.color.clr_3)
+                            in 31..40 -> getColorStateList(R.color.clr_4)
+                            in 41..50 -> getColorStateList(R.color.clr_5)
                             else -> getColorStateList(R.color.clr_1)
                         }
                     }
@@ -105,8 +111,8 @@ class ResultActivity : BaseActivity<ActivityResultBinding, RealViewModel>() {
 
 
             isNotYet.observe(this@ResultActivity, Observer {
-                if (it){
-                    alert(message = "미추첨 회차입니다."){
+                if (it) {
+                    alert(message = "미추첨 회차입니다.") {
                         finish()
                     }
                 }
@@ -116,9 +122,38 @@ class ResultActivity : BaseActivity<ActivityResultBinding, RealViewModel>() {
         }
     }
 
-    inner class BoardAdapter : RecyclerView.Adapter<BoardHolder>(){
+    override fun onBackPressed() {
+        if (!LocalDataController.isWriteReview) {
+            if (LocalDataController.useCount % 4 == 0) {
+                val manager = ReviewManagerFactory.create(this)
+                val request = manager.requestReviewFlow()
+                request.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val reviewInfo = task.result
+                        val flow = manager.launchReviewFlow(this, reviewInfo)
+                        flow.addOnCompleteListener { _ ->
+                            LocalDataController.isWriteReview = true
+                            finish()
+                        }
+                        flow.addOnFailureListener {
+                            finish()
+                        }
+                    } else {
+                        finish()
+                    }
+                }
+            } else {
+                finish()
+            }
+        } else {
+            finish()
+        }
+    }
+
+    inner class BoardAdapter : RecyclerView.Adapter<BoardHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoardHolder {
-            var view = LayoutInflater.from(parent.context).inflate(R.layout.holder_board, parent, false)
+            var view =
+                LayoutInflater.from(parent.context).inflate(R.layout.holder_board, parent, false)
             return BoardHolder(view)
         }
 
@@ -133,12 +168,12 @@ class ResultActivity : BaseActivity<ActivityResultBinding, RealViewModel>() {
     }
 
 
-    inner class BoardHolder(view : View) : RecyclerView.ViewHolder(view){
+    inner class BoardHolder(view: View) : RecyclerView.ViewHolder(view) {
         var mBinding = HolderBoardBinding.bind(view)
 
-        fun init(item : List<Int>, position : Int){
+        fun init(item: List<Int>, position: Int) {
             mBinding.run {
-                tvLine.text = when(position){
+                tvLine.text = when (position) {
                     0 -> "A"
                     1 -> "B"
                     2 -> "C"
@@ -152,13 +187,13 @@ class ResultActivity : BaseActivity<ActivityResultBinding, RealViewModel>() {
                 numViewList.forEachIndexed { index, textView ->
                     textView.run {
                         text = item[index].toString()
-                        if (winnerNum.contains(item[index])){
-                            textView.backgroundTintList =when (item[index]){
-                                in 1 .. 10 -> getColorStateList(R.color.clr_1)
-                                in 11 .. 20 -> getColorStateList(R.color.clr_2)
-                                in 21 .. 30 -> getColorStateList(R.color.clr_3)
-                                in 31 .. 40 -> getColorStateList(R.color.clr_4)
-                                in 41 .. 50 -> getColorStateList(R.color.clr_5)
+                        if (winnerNum.contains(item[index])) {
+                            textView.backgroundTintList = when (item[index]) {
+                                in 1..10 -> getColorStateList(R.color.clr_1)
+                                in 11..20 -> getColorStateList(R.color.clr_2)
+                                in 21..30 -> getColorStateList(R.color.clr_3)
+                                in 31..40 -> getColorStateList(R.color.clr_4)
+                                in 41..50 -> getColorStateList(R.color.clr_5)
                                 else -> getColorStateList(R.color.clr_1)
                             }
                         } else {
